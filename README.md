@@ -1,54 +1,51 @@
-# llama.cpp Server Monitor
+# llama.cpp Monitoring
 
-Real-time monitoring for llama.cpp server via Prometheus metrics endpoint.
+Real-time monitoring and visualization for llama.cpp servers.
 
-## Setup
+## Quick Start
 
+### 1. Start the llama.cpp server
 ```bash
-cd ~/projects/llama.cpp_monitoring
+llamacpp
 ```
 
-## Usage
-
-### 1. Real-time terminal monitor
+### 2. Start the monitoring stack
 ```bash
-python3 monitor.py
-```
-Polls `/metrics` every 2 seconds and displays tokens/sec, VRAM usage, and request count.
-
-### 2. Background logging
-```bash
-python3 log_metrics.py
-```
-Polls every 5 seconds, writes JSON lines to `metrics.log`. Runs until Ctrl+C.
-
-### 3. Summary view
-```bash
-python3 summary.py          # Last 50 samples
-python3 summary.py 200      # Last 200 samples
+docker compose up -d
 ```
 
-### 4. Graph/plot
+### 3. Access the services
+- **Grafana**: http://localhost:3000 (admin/grafana)
+- **Prometheus**: http://localhost:9191
+
+## Dashboard
+
+The "llama.cpp Monitor" dashboard includes:
+
+### Throughput
+- **Tokens/sec** — Generation and prompt throughput
+- **Requests Processing** — Currently active requests
+- **Requests Queued** — Deferred requests waiting for capacity
+
+### Cumulative
+- **Total Tokens** — Generated vs prompt tokens over time
+- **Processing Time** — Cumulative generation and prompt time
+
+### Latency
+- **Prompt Latency** — Time to process prompt tokens
+- **Sampling Latency** — Time per token generation
+
+## CLI Tools
+
+Still available alongside Grafana:
 ```bash
-python3 graph.py            # Plot last 200 samples → plot.png
-python3 graph.py 500        # Plot last 500 samples → plot.png
+python3 monitor.py      # Real-time terminal monitor
+python3 log_metrics.py & # Background logger
+python3 summary.py      # Stats from metrics.log
+python3 graph.py        # Generate plot.png
 ```
 
-## Files
-
-| File | Purpose |
-|---|---|
-| `monitor.py` | Real-time terminal monitor |
-| `log_metrics.py` | Background JSON logger |
-| `summary.py` | Text summary of logged data |
-| `graph.py` | Generates `plot.png` chart |
-
-## Prerequisites
-
-- llama.cpp server running with `--metrics` flag
-- Python 3 with `matplotlib` (for graph.py)
-
+## Stopping
 ```bash
-# Install matplotlib if needed
-pip install matplotlib
+docker compose down
 ```
